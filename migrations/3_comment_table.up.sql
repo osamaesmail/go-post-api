@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS `comment` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `body` TEXT NOT NULL,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    `updated_at` DATETIME,
+    `account_id` BIGINT NOT NULL REFERENCES account(id),
+    `post_id` BIGINT NOT NULL REFERENCES post(id)
+);
