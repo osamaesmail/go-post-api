@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    networks:
+      - backend
+    volumes:
+      - mysql:/var/lib/mysql
+    restart: always
+    ports:
+      - "${MYSQL_PORT}:3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    networks:
+      - backend
+    volumes:
+      - redis:/data
+    restart: always
+    ports:
+      - "${REDIS_PORT}:6379"
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+
+  app:
+    build: .
+    networks:
+      - backend
+    depends_on:
+      - redis
+      - mysql
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    env_file: .env
+    restart: always
+
+volumes:
+  mysql: {}
+  redis: {}
+
+
+networks:
+  backend:
+    driver: bridge
